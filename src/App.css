@@ -1,0 +1,175 @@
+.App {
+  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+}
+
+.thread-section {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 250px;
+  background-color: #f5f5f5;
+}
+
+.thread-section h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.instance-id {
+  background-color: #e0e0e0;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #666;
+}
+
+.customer-info {
+  text-align: left;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.customer-info p {
+  margin: 5px 0;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.refresh-button {
+  background-color: #2196F3;
+  margin-top: 20px;
+}
+
+.refresh-button:hover {
+  background-color: #0b7dda;
+}
+
+.explanation {
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: left;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.explanation h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.explanation p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.communication-section {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+}
+
+.communication-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.communication-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.communication-buttons button {
+  background-color: #FF9800;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.communication-buttons button:hover {
+  background-color: #F57C00;
+}
+
+.communication-results {
+  margin-bottom: 20px;
+  min-height: 30px;
+}
+
+.result-item {
+  background-color: #E8F5E8;
+  border: 1px solid #4CAF50;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px 0;
+  font-family: monospace;
+  color: #2E7D32;
+}
+
+.communication-log {
+  text-align: left;
+}
+
+.communication-log h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.log-content {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  padding: 15px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #333;
+}
+
+.log-entry {
+  margin: 2px 0;
+  padding: 2px 0;
+  border-bottom: 1px solid #333;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-empty {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  margin: 20px 0;
+}
