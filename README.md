@@ -1,29 +1,39 @@
-# Web Worker Singleton Demo
+# Web Worker Logger Singleton Demo
 
-A React TypeScript application demonstrating how singleton patterns work in different JavaScript execution contexts (main thread vs web worker threads).
+A React TypeScript application demonstrating how singleton patterns work in different JavaScript execution contexts, using a Logger singleton that buffers messages and flushes to console when reaching capacity.
 
 ## 🎯 Purpose
 
-This project demonstrates a fundamental concept in web development: **JavaScript execution contexts are isolated**. Even when using the same singleton pattern, each thread (main thread and web worker) maintains its own separate instance with independent state.
+This project demonstrates a fundamental concept in web development: **JavaScript execution contexts are isolated**. Even when using the same singleton pattern, each thread (main thread and web worker) maintains its own separate instance with independent state. This demo uses a Logger singleton that buffers 1000 messages before flushing to console.
 
 ### Key Learning Points:
-- ✅ **Singleton Pattern Isolation**: Each thread gets its own singleton instance
+- ✅ **Singleton Pattern Isolation**: Each thread gets its own logger instance
+- ✅ **Buffer Management**: Independent 1000-message buffers per thread
+- ✅ **Auto-Flush Behavior**: Automatic console logging when buffers are full
 - ✅ **Thread Communication**: Bidirectional messaging between main thread and workers
-- ✅ **State Independence**: Updates in one thread don't affect the other
+- ✅ **Real-time Monitoring**: Live buffer status and progress visualization
 - ✅ **Modern Web Workers**: ES modules and TypeScript support
 
 ## 🚀 Features
 
 ### Core Demonstration
-- **Separate Customer Singletons**: Main thread and worker thread each have their own `CustomerSingleton` instance
+- **Separate Logger Singletons**: Main thread and worker thread each have their own `LoggerSingleton` instance
 - **Visual Instance IDs**: Each singleton displays a unique identifier to prove separation
-- **Independent State Management**: Customer data updates don't cross thread boundaries
+- **Independent Buffer Management**: Log buffers in each thread operate independently
+- **Auto-Flush Mechanism**: Buffers automatically flush to console when reaching 1000 messages
+
+### Logger Features
+- **📝 Manual Logging**: Send individual log messages to either thread
+- **🚀 Auto-Logging Demo**: Continuously generate logs in both threads simultaneously
+- **📊 Real-time Buffer Status**: Visual progress bars showing buffer fill levels
+- **🚽 Force Flush**: Manually flush buffers before they reach capacity
+- **🎯 Log Level Support**: Info, warn, error, and debug message levels
+- **📈 Statistics Tracking**: Total log count per thread
 
 ### Communication Features
-- **🏓 Ping/Pong**: Test basic communication with round-trip timing
-- **🧮 Age Calculator**: Worker performs calculations and returns results
-- **🔄 Reset Customer**: Worker state manipulation from main thread
+- **🏓 Ping/Pong**: Test basic communication with round-trip timing and buffer status
 - **📊 Real-time Logging**: Visual log of all messages with timestamps
+- **🔄 Thread Isolation**: Demonstrate that logs in one thread don't affect the other
 
 ### Technical Features
 - **Modern Build System**: Vite for fast development and building

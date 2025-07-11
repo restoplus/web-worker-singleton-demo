@@ -1,25 +1,31 @@
-import CustomerSingleton from '../singletons/CustomerSingleton';
+import LoggerSingleton from '../singletons/LoggerSingleton';
 
 export interface WorkerMessage {
-  type: 'GET_CUSTOMER' | 'UPDATE_CUSTOMER' | 'GET_INSTANCE_ID' | 'PING' | 'CALCULATE_AGE' | 'RESET_CUSTOMER';
+  type: 'LOG_MESSAGE' | 'GET_BUFFER_STATUS' | 'FORCE_FLUSH' | 'GET_INSTANCE_ID' | 'PING' | 'START_LOGGING' | 'STOP_LOGGING';
   payload?: any;
   timestamp?: number;
 }
 
 export interface WorkerResponse {
-  type: 'CUSTOMER_DATA' | 'INSTANCE_ID' | 'UPDATE_COMPLETE' | 'PONG' | 'AGE_CALCULATED' | 'RESET_COMPLETE' | 'WORKER_LOG';
+  type: 'BUFFER_STATUS' | 'INSTANCE_ID' | 'LOG_COMPLETE' | 'PONG' | 'FLUSH_COMPLETE' | 'WORKER_LOG' | 'LOGGING_STATUS';
   data: any;
   timestamp?: number;
 }
 
-// Initialize the singleton in the worker context
-const customerSingleton = CustomerSingleton.getInstance();
+// Initialize the logger singleton in the worker context
+const loggerSingleton = LoggerSingleton.getInstance();
+
+// Auto-logging state
+let autoLoggingInterval: NodeJS.Timeout | null = null;
 
 // Handle messages from the main thread
 self.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
   const { type, payload, timestamp } = event.data;
   
-  // Log received message
+  // Log received message using our logger
+  loggerSingleton.log(`Worker received: ${type}`, 'debug');
+  
+  // Also send to main thread for UI logging
   self.postMessage({
     type: 'WORKER_LOG',
     data: {
@@ -31,28 +37,42 @@ self.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
   } as WorkerResponse);
 
   switch (type) {
-    case 'GET_CUSTOMER':
-      const customer = customerSingleton.getCustomer();
-      const response: WorkerResponse = {
-        type: 'CUSTOMER_DATA',
+    case 'LOG_MESSAGE':
+      loggerSingleton.log(payload.message, payload.level || 'info');
+      const bufferStatus = loggerSingleton.getBufferStatus();
+      self.postMessage({
+        type: 'LOG_COMPLETE',
         data: {
-          customer,
-          instanceId: customerSingleton.getInstanceId(),
-          threadType: 'worker'
+          bufferStatus,
+          instanceId: loggerSingleton.getInstanceId(),
+          totalLogs: loggerSingleton.getTotalLogCount()
         },
         timestamp: Date.now()
-      };
-      self.postMessage(response);
+      } as WorkerResponse);
       break;
 
-    case 'UPDATE_CUSTOMER':
-      customerSingleton.updateCustomer(payload);
+    case 'GET_BUFFER_STATUS':
+      const status = loggerSingleton.getBufferStatus();
       self.postMessage({
-        type: 'UPDATE_COMPLETE',
+        type: 'BUFFER_STATUS',
         data: {
-          customer: customerSingleton.getCustomer(),
-          instanceId: customerSingleton.getInstanceId(),
-          updatedField: payload
+          bufferStatus: status,
+          instanceId: loggerSingleton.getInstanceId(),
+          totalLogs: loggerSingleton.getTotalLogCount(),
+          recentLogs: loggerSingleton.getRecentLogs(5)
+        },
+        timestamp: Date.now()
+      } as WorkerResponse);
+      break;
+
+    case 'FORCE_FLUSH':
+      loggerSingleton.forceFlush();
+      self.postMessage({
+        type: 'FLUSH_COMPLETE',
+        data: {
+          message: 'Buffer flushed manually',
+          instanceId: loggerSingleton.getInstanceId(),
+          totalLogs: loggerSingleton.getTotalLogCount()
         },
         timestamp: Date.now()
       } as WorkerResponse);
@@ -62,57 +82,74 @@ self.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
       self.postMessage({
         type: 'INSTANCE_ID',
         data: {
-          instanceId: customerSingleton.getInstanceId(),
+          instanceId: loggerSingleton.getInstanceId(),
           threadType: 'worker'
         },
         timestamp: Date.now()
       } as WorkerResponse);
       break;
 
+    case 'START_LOGGING':
+      if (autoLoggingInterval) {
+        clearInterval(autoLoggingInterval);
+      }
+      
+      const interval = payload?.interval || 10; // Default 10ms
+      autoLoggingInterval = setInterval(() => {
+        const messages = [
+          'Processing data batch',
+          'Validating user input',
+          'Calculating metrics',
+          'Updating cache',
+          'Sending notification',
+          'Performing cleanup',
+          'Optimizing performance',
+          'Checking system health'
+        ];
+        
+        const levels = ['info', 'warn', 'error', 'debug'] as const;
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+        
+        loggerSingleton.log(`${randomMessage} - ${Date.now()}`, randomLevel);
+      }, interval);
+      
+      self.postMessage({
+        type: 'LOGGING_STATUS',
+        data: {
+          status: 'started',
+          interval,
+          message: `Auto-logging started with ${interval}ms interval`
+        },
+        timestamp: Date.now()
+      } as WorkerResponse);
+      break;
+
+    case 'STOP_LOGGING':
+      if (autoLoggingInterval) {
+        clearInterval(autoLoggingInterval);
+        autoLoggingInterval = null;
+      }
+      
+      self.postMessage({
+        type: 'LOGGING_STATUS',
+        data: {
+          status: 'stopped',
+          message: 'Auto-logging stopped'
+        },
+        timestamp: Date.now()
+      } as WorkerResponse);
+      break;
+
     case 'PING':
+      loggerSingleton.log('Received ping from main thread', 'debug');
       self.postMessage({
         type: 'PONG',
         data: {
-          message: 'Hello from worker!',
+          message: 'Hello from worker logger!',
           receivedAt: Date.now(),
-          originalTimestamp: timestamp
-        },
-        timestamp: Date.now()
-      } as WorkerResponse);
-      break;
-
-    case 'CALCULATE_AGE':
-      const currentCustomer = customerSingleton.getCustomer();
-      const birthDate = new Date(currentCustomer.dateOfBirth);
-      const today = new Date();
-      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
-      
-      self.postMessage({
-        type: 'AGE_CALCULATED',
-        data: {
-          calculatedAge,
-          currentAge: currentCustomer.age,
-          birthDate: currentCustomer.dateOfBirth,
-          calculation: `${today.getFullYear()} - ${birthDate.getFullYear()} = ${calculatedAge}`
-        },
-        timestamp: Date.now()
-      } as WorkerResponse);
-      break;
-
-    case 'RESET_CUSTOMER':
-      // Reset customer to initial state
-      customerSingleton.updateCustomer({
-        name: 'John Doe',
-        age: 30,
-        dateOfBirth: new Date('1994-01-01')
-      });
-      
-      self.postMessage({
-        type: 'RESET_COMPLETE',
-        data: {
-          customer: customerSingleton.getCustomer(),
-          instanceId: customerSingleton.getInstanceId(),
-          message: 'Customer reset to initial state'
+          originalTimestamp: timestamp,
+          bufferStatus: loggerSingleton.getBufferStatus()
         },
         timestamp: Date.now()
       } as WorkerResponse);

@@ -173,3 +173,119 @@ button:hover {
   text-align: center;
   margin: 20px 0;
 }
+
+.logger-info {
+  text-align: left;
+  margin: 15px 0;
+  padding: 15px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.buffer-status {
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50 0%, #FFC107 70%, #FF5722 100%);
+  transition: width 0.3s ease;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.auto-logging-section {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  border: 2px solid #2196F3;
+  text-align: center;
+}
+
+.auto-logging-section h2 {
+  color: #1976D2;
+  margin-bottom: 10px;
+}
+
+.auto-logging-controls {
+  margin: 20px 0;
+}
+
+.start-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.start-button:hover {
+  background-color: #45a049;
+}
+
+.stop-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.stop-button:hover {
+  background-color: #da190b;
+}
+
+.auto-logging-status {
+  margin-top: 15px;
+}
+
+.status-active {
+  color: #4CAF50;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.explanation ul {
+  text-align: left;
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.explanation li {
+  margin: 8px 0;
+  line-height: 1.4;
+}
